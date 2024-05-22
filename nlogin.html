@@ -40,6 +40,7 @@
             if (pubkey) {
               loggedIn = true
                 console.log("pubkey", pubkey)
+                document.getElementById('pubkey').textContent = Current npub is: ${pubkey};
             } 
           }).catch((err) => {
             console.log("LoadUser Err", err);
@@ -55,7 +56,7 @@
 
 <body>
     <h1>Nlogin</h1>
-<div>
+<div id="pubkey">
     content
 </div>
 
