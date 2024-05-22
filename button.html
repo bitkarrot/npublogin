@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nostr Login Example</title>
+  <script src="https://www.unpkg.com/nostr-login@latest/dist/unpkg.js" data-perms="sign_event:1,sign_event:0" data-theme="ocean"></script>
+</head>
+<body>
+    <h1> Testing Nostr-login/Logout buttons</h1>
+
+    <p> This is a demo only </p>
+    <button id="signupButton">Login to Nostr</button>
+    <button id="logoutButton">Logout</button>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        if (window.nostr) {
+    
+            function onSignupClick() {
+                document.dispatchEvent(new CustomEvent('nlLaunch', { detail: 'welcome' }));
+            }
+            document.getElementById('signupButton').addEventListener('click', onSignupClick);
+
+            function onLogoutClick() {
+                document.dispatchEvent(new Event("nlLogout"))
+            }
+            document.getElementById('logoutButton').addEventListener('click', onLogoutClick);
+
+
+        } else {
+            console.error('Nostr Login script is not loaded correctly.');
+        }
+    });
+
+  </script>
+</body>
+</html>
