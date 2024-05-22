@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Public Key (npub)</title>
+    <script src="https://www.unpkg.com/nostr-login@latest/dist/unpkg.js"  data-perms="sign_event:1,sign_event:0" data-theme="ocean"></script>
+    <script>
+    var userNames = new Map()
+    var loggedIn = false
+    document.addEventListener('nlAuth', (e) => {
+        console.log("nlauth", e)
+        // type is login, signup or logout
+        if (e.detail.type === 'login' || e.detail.type === 'signup') {
+          //onLogin();  // get pubkey with window.nostr and show user profile
+          if (!loggedIn) {
+            console.log("Logging In")
+            loggedIn = true
+            setTimeout(function() {
+              loadUser()
+            }, 200);
+          }
+        } else {
+          // onLogout()  // clear local user data, hide profile info 
+          if (loggedIn) {
+            console.log("Logging Off")
+            loggedIn = false
+            setTimeout(function() {
+              console.log("logoff section")
+              loggedIn = false
+              // logOff()
+            }, 200);
+          }
+        }
+      })
+
+      function loadUser() {
+        if (window.nostr) {
+          window.nostr.getPublicKey().then(function (pubkey) {
+            if (pubkey) {
+              loggedIn = true
+                console.log("pubkey", pubkey)
+            } 
+          }).catch((err) => {
+            console.log("LoadUser Err", err);
+            console.log("logoff section")
+            //logOff()
+          })
+        }
+      }
+
+</script>
+
+</head>
+
+<body>
+    <h1>Nlogin</h1>
+<div>
+    content
+</div>
+
+</body>
+</html>
