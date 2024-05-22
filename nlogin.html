@@ -51,7 +51,10 @@
             if (pubkey) {
               loggedIn = true
               npubkey = pubkey
-              console.log("pubkey", pubkey)
+              console.log("fetched pubkey", pubkey)
+              var pubkeyElement = document.getElementById('pubkey');
+              pubkeyElement.innerHTML = "Getting Current npub..." + npubkey;
+        
             } 
           }).catch((err) => {
             console.log("LoadUser Err", err);
@@ -61,9 +64,6 @@
         }
       }
 
-      var pubkeyElement = document.getElementById('pubkey');
-      // Set the new content for the element
-      pubkeyElement.innerHTML = "Getting Current npub..." + npubkey;
 
 </script>
 </html>
