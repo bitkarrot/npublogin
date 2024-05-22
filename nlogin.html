@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Public Key (npub)</title>
     <script src="https://www.unpkg.com/nostr-login@latest/dist/unpkg.js"  data-perms="sign_event:1,sign_event:0" data-theme="ocean"></script>
+</head>
+
+    <body>
+        <h1>Nlogin</h1>
+        <div>
+            <p id="pubkey">Fetching npub...</p>
+        </div>
+    </body>
+        
     <script>
     var userNames = new Map()
     var loggedIn = false
+    var npubkey = null;
+
     document.addEventListener('nlAuth', (e) => {
         console.log("nlauth", e)
         // type is login, signup or logout
@@ -39,8 +50,8 @@
           window.nostr.getPublicKey().then(function (pubkey) {
             if (pubkey) {
               loggedIn = true
-                console.log("pubkey", pubkey)
-//                document.getElementById('pubkey').textContent = Current npub is: ${pubkey};
+              npubkey = pubkey
+              console.log("pubkey", pubkey)
             } 
           }).catch((err) => {
             console.log("LoadUser Err", err);
@@ -50,15 +61,9 @@
         }
       }
 
+      var pubkeyElement = document.getElementById('pubkey');
+      // Set the new content for the element
+      pubkeyElement.innerHTML = "Getting Current npub..." + npubkey;
+
 </script>
-
-</head>
-
-<body>
-    <h1>Nlogin</h1>
-<div>
-    <p id="pubkey">Fetching npub...</p>
-</div>
-
-</body>
 </html>
