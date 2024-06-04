@@ -6,8 +6,8 @@ For most, just Ignore this repo
 
 Not for production use. 
 
-- [index.html](https://bitkarrot.github.io/npub/) is regular vanilla javascript (S7NC) - not working
+- [sync.html](https://bitkarrot.github.io/npublogin/sync) is regular vanilla javascript (S7NC) - not working
 
-- [nlogin.html](https://bitkarrot.github.io/npub/nlogin.html) uses https://github.com/nostrband/nostr-login
+- [nlogin.html](https://bitkarrot.github.io/npublogin/nlogin) uses https://github.com/nostrband/nostr-login
 
-- [button.html](https://bitkarrot.github.io/npub/button.html) just a simple in-page button set to test nostr login and logout
+- [button.html](https://bitkarrot.github.io/npublogin/button) just a simple in-page button set to test nostr login and logout
