@@ -1,4 +1,6 @@
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <body>
   <script type="module">
@@ -6,7 +8,9 @@
   import {requestProvider} from 'https://esm.sh/@getalby/bitcoin-connect@3.0.0-beta.3'; // jsdelivr.net, skypack.dev also work
   import { LightningAddress } from "https://esm.sh/@getalby/lightning-tools@5.0.0"; // jsdelivr.net, skypack.dev also work
 
-  
+
+      // todo  - make this work with just a lightning address and user selected
+      // satoshis based on range avail.
     (async () => {
       
       const ln = new LightningAddress("hello@getalby.com");
@@ -14,13 +18,22 @@
       await ln.fetch();
       // get the LNURL-pay data:
       console.log(ln.lnurlpData); // returns a [LNURLPayResponse](https://github.com/getAlby/alby-tools/blob/master/src/types.ts#L1-L15)
+    // allow user to set based on lnaddress range min and max
+     const min = ln.lnurlpData.min;
+     const max = ln.lnurlpData.max;
+     console.log("lnurlp min/max", min, max);
+
+        // show slider here
       const invoice = await ln.requestInvoice({
         satoshi: 1
       });
+
+
       document.body.innerHTML += invoice.paymentRequest;
       document.body.innerHTML += "<br/>";
       document.body.innerHTML += "waiting for payment";
-      document.getElementById('pay').addEventListener('click', async () => {
+
+      document.getElementById('pay-alby').addEventListener('click', async () => {
         const provider = await requestProvider();
         await provider.sendPayment(invoice.paymentRequest);
         document.body.innerHTML += "PAID!";
@@ -34,7 +47,7 @@
   <p id="invoice"></p>
   <bc-button></bc-button>
   <br/>
-  <button id="pay">Pay invoice</button>
+  <button id="pay-alby">Pay invoice</button>
   <br/><br/>
 </body>
 

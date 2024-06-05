@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Pop-up</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <button id="showProfileButton" data-event-param="npub18pudjhdhhp2v8gxnkttt00um729nv93tuepjda2jrwn3eua5tf5s80a699">Show Profile</button>
+
+    <script>
+
+        function getNjumpProfile(eventParam) {
+            var scriptElement = document.currentScript;
+            var host = "https://njump.me";
+            
+            var width = '100%';  // Set default width
+            var height = 'auto'; // Set default height
+            var iframe = document.createElement('iframe');
+            iframe.src = host + '/' + eventParam + '?embed=yes';
+            iframe.style.width = width;
+            iframe.style.height = height;
+            
+            // Add a class to easily permit overwriting the styles
+            iframe.classList.add("nostr-embedded");
+
+            // Listen for messages from the iframe
+            window.addEventListener('message', function(event) {
+                console.log("Message received:", event.data);
+                    var maxViewportHeight = window.innerHeight * 0.5;            
+                    // Adjust the height of the iframe based on the received content height
+                    var receivedHeight = Math.min(event.data.height, maxViewportHeight);
+                    iframe.style.height = receivedHeight + 'px';
+                     const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    iframe.contentWindow.postMessage({setDarkMode: true}, '*');
+            });
+
+            return iframe;
+        }
+
+        // Attach an event listener to the button
+        document.getElementById('showProfileButton').addEventListener('click', function() {
+            var eventParam = this.getAttribute('data-event-param');
+            var iframe = getNjumpProfile(eventParam);
+
+            // Use SweetAlert2 to create a pop-up and insert the iframe into its content
+            Swal.mixin({
+                title: 'Nostr Profile',
+                heightAuto: false, 
+                html: '', 
+                width: '80vw',
+                padding: '0.5em',
+                showCloseButton: false,
+                showConfirmButton: false,
+                didOpen: (popup) => {
+                   popup.appendChild(iframe);
+                },
+            }).fire();
+        });
+    </script>
+</body>
+</html>
