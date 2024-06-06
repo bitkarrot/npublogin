@@ -49,6 +49,17 @@
   <br/>
   <button id="pay-alby">Pay invoice</button>
   <br/><br/>
+<div>
+
+  <script src='https://www.unpkg.com/nostr-login@latest/dist/unpkg.js' data-no-banner="true"  data-perms="sign_event:1,sign_event:0" data-theme="ocean"></script>
+  <script>
+    document.getElementById('svgButton').addEventListener('click', function() {
+        document.dispatchEvent(new CustomEvent('nlLaunch', { detail: 'welcome' }));
+    });
+  </script>
+
+</div>
+
 </body>
 
 </html>
