@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostr Event Sender with nos2x</title>
+</head>
+<body>
+    <h1>Nostr Event Sender with nos2x</h1>
+    <button id="send-event-btn">Send Event</button>
+
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+    <script>
+        document.getElementById('send-event-btn').addEventListener('click', async () => {
+            if (!window.nostr) {
+                alert('nos2x extension is not available. Please install it to proceed.');
+                return;
+            }
+
+            try {
+                // Request public key from the nos2x extension
+                const publicKey = await window.nostr.getPublicKey();
+                console.log(`Public Key: ${publicKey}`);
+
+                // Create an event
+                const event = {
+                    kind: 1,
+                    pubkey: publicKey,
+                    created_at: Math.floor(Date.now() / 1000),
+                    tags: [],
+                    content: 'Hello, Signing and Sending Kind 1 Nostr Event from nos2x!',
+                };
+                console.log("Event created", event)
+                // Request the nos2x extension to sign the event
+                const signedEvent = await window.nostr.signEvent(event);
+                console.log('Signed Event:', signedEvent);
+                const eventID = signedEvent["id"]
+                console.log("Event ID", eventID)
+
+                // Define the relay URLs
+                const relays = ['wss://testnet.plebnet.dev/nostrrelay/1'];
+
+                // Create a pool and publish the event
+                const pool = new window.NostrTools.SimplePool();
+                await Promise.any(pool.publish(relays, signedEvent));
+                console.log('Published to at least one relay!');
+
+                // Subscribe to all user events, log the one we just published
+                const h = pool.subscribeMany(
+                    [...relays],
+                    [
+                        {
+                            authors: [publicKey],
+                        },
+                    ],
+                    {
+                        onevent(event) {
+                            if (event.id === eventID) {
+                                console.log('Event received:', event);                                
+                            }
+                        },
+                        oneose() {
+                            h.close();
+                        },
+                    }
+                );
+
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        });
+    </script>
+</body>
+</html>
