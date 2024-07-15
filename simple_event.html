@@ -1,74 +1,115 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nostr Event Sender with nos2x</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Nostr Event Sender with nos2x</h1>
     <button id="send-event-btn">Send Event</button>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
-        document.getElementById('send-event-btn').addEventListener('click', async () => {
-            if (!window.nostr) {
-                alert('nos2x extension is not available. Please install it to proceed.');
-                return;
-            }
 
-            try {
-                // Request public key from the nos2x extension
-                const publicKey = await window.nostr.getPublicKey();
-                console.log(`Public Key: ${publicKey}`);
+      let loggedIn = false;
 
-                // Create an event
-                const event = {
-                    kind: 1,
-                    pubkey: publicKey,
-                    created_at: Math.floor(Date.now() / 1000),
-                    tags: [],
-                    content: 'Hello, Signing and Sending Kind 1 Nostr Event from nos2x!',
-                };
-                console.log("Event created", event)
-                // Request the nos2x extension to sign the event
-                const signedEvent = await window.nostr.signEvent(event);
-                console.log('Signed Event:', signedEvent);
-                const eventID = signedEvent["id"]
-                console.log("Event ID", eventID)
+      async function sendEvent(textNote) {
+          try {
+              // Request public key from the nos2x extension
+              const publicKey = await window.nostr.getPublicKey();
+              console.log(`Public Key: ${publicKey}`);
 
-                // Define the relay URLs
-                const relays = ['wss://testnet.plebnet.dev/nostrrelay/1'];
+              // Create an event
+              const event = {
+                  kind: 1,
+                  pubkey: publicKey,
+                  created_at: Math.floor(Date.now() / 1000),
+                  tags: [],
+                  content: textNote,
+              };
+              console.log("Event created", event)
+              // Request the nos2x extension to sign the event
+              const signedEvent = await window.nostr.signEvent(event);
+              console.log('Signed Event:', signedEvent);
+              const eventID = signedEvent["id"]
+              console.log("Event ID", eventID)
 
-                // Create a pool and publish the event
-                const pool = new window.NostrTools.SimplePool();
-                await Promise.any(pool.publish(relays, signedEvent));
-                console.log('Published to at least one relay!');
+              // Define the relay URLs
+              const relays = ['wss://testnet.plebnet.dev/nostrrelay/XmnWyifA'];
 
-                // Subscribe to all user events, log the one we just published
-                const h = pool.subscribeMany(
-                    [...relays],
-                    [
-                        {
-                            authors: [publicKey],
-                        },
-                    ],
-                    {
-                        onevent(event) {
-                            if (event.id === eventID) {
-                                console.log('Event received:', event);                                
-                            }
-                        },
-                        oneose() {
-                            h.close();
-                        },
-                    }
-                );
+              // Create a pool and publish the event
+              const pool = new window.NostrTools.SimplePool();
+              await Promise.any(pool.publish(relays, signedEvent));
+              console.log('Published to at least one relay!');
 
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
-        });
+              // Subscribe to all user events, log the one we just published
+              const h = pool.subscribeMany(
+                  [...relays],
+                  [
+                      {
+                          authors: [publicKey],
+                      },
+                  ],
+                  {
+                      onevent(event) {
+                          if (event.id === eventID) {
+                              console.log('Event received:', event);
+                              Swal.fire({
+                                  icon: 'success',
+                                  title: 'Event Sent',
+                                  text: 'Event sent successfully!',
+                              })
+                          }
+                      },
+                      oneose() {
+                          h.close();
+                      },
+                  }
+              );
+          } catch(error) {
+              console.error('An error occurred:', error);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Something went wrong!',
+              })
+          }
+      }
+
+
+      document.getElementById('send-event-btn').addEventListener('click', async () => {
+          if (!window.nostr) {
+              alert('nos2x extension is not available. Please install it to proceed.');
+              return;
+          }
+          try {
+              let textNote = '';
+              Swal.fire({
+                  title:  "Post to Relays",
+                  text: "Share a message about this room to Nostr!",
+                  input: "textarea",
+                  inputValue: "Hey Come join us on Nostr!",
+                  inputPlaceholder: "Enter your message here",
+                  inputAutoTrim: true,
+                  reverseButtons: true,
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Yes, post!"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                      textNote = result.value
+                      console.log("Text", textNote)
+                      sendEvent(textNote)
+                  }
+                });
+
+          } catch (error) {
+              console.error('An error occurred:', error);
+          }
+      });
     </script>
-</body>
+  </body>
 </html>
