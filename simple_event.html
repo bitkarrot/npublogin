@@ -13,10 +13,11 @@
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
 
-      let loggedIn = false;
-
       async function sendEvent(textNote) {
           try {
+              // Define the relay URLs
+              const relays = ['wss://testnet.plebnet.dev/nostrrelay/XmnWyifA'];
+
               // Request public key from the nos2x extension
               const publicKey = await window.nostr.getPublicKey();
               console.log(`Public Key: ${publicKey}`);
@@ -35,9 +36,6 @@
               console.log('Signed Event:', signedEvent);
               const eventID = signedEvent["id"]
               console.log("Event ID", eventID)
-
-              // Define the relay URLs
-              const relays = ['wss://testnet.plebnet.dev/nostrrelay/XmnWyifA'];
 
               // Create a pool and publish the event
               const pool = new window.NostrTools.SimplePool();

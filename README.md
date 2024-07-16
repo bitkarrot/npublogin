@@ -12,6 +12,9 @@ Not for production use.
 
 - [button.html](https://bitkarrot.github.io/npublogin/button) just a simple in-page button set to test nostr login and logout
 
+- [simple_event.html](https://bitkarrot.github.io/npublogin/simple_event) just a simple in-page button set to test nostr event signing and post Kind 1 note to nostr relays
+
+
 ### How to Run
 
 Just run a simple http server on command line:
